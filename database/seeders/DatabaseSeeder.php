@@ -2,22 +2,23 @@
 
 namespace Database\Seeders;
 
+use App\Models\Passenger;
+use App\Models\Trip;
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
-
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Lulzie',
+            'email' => 'lulzie@example.com',
         ]);
+
+        Trip::factory()
+            ->count(10)
+            ->has(Passenger::factory()->count(rand(28, 35)))
+            ->create();
     }
 }
