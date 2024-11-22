@@ -42,6 +42,6 @@ class AuthenticatedSessionControllerTest extends TestCase
         $response = $this->actingAs($user)->post('/logout');
 
         $this->assertGuest();
-        $response->assertNoContent();
+        $response->assertOk();
     }
 }

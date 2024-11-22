@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Auth;
 class AuthenticatedSessionController extends ApiController
 {
     /**
+     * Login
+     *
      * Handle an incoming authentication request.
      */
     public function store(LoginRequest $request): Response
@@ -23,9 +25,11 @@ class AuthenticatedSessionController extends ApiController
     }
 
     /**
+     * Logout
+     *
      * Destroy an authenticated session.
      */
-    public function destroy(Request $request): Response
+    public function destroy(Request $request)
     {
         Auth::guard('web')->logout();
 
@@ -33,6 +37,6 @@ class AuthenticatedSessionController extends ApiController
 
         $request->session()->regenerateToken();
 
-        return response()->noContent();
+        return $this->response->message('Logged out successfully')->build(Response::HTTP_OK);
     }
 }
