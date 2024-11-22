@@ -23,9 +23,11 @@ class RegisteredUserController extends ApiController
     {
         return DB::transaction(function () use ($request) {
             $request->validate([
+                //  TODO: Refactor into jsonapi.org format
                 'name' => ['required', 'string', 'max:255'],
                 'email' => ['required', 'string', 'lowercase', 'email', 'max:255'],
                 'password' => ['required', 'confirmed', Rules\Password::defaults()],
+                'avatar' => ['nullable', 'string'],
             ]);
 
             if (User::where('email', $request->email)->exists()) {
@@ -44,6 +46,11 @@ class RegisteredUserController extends ApiController
             ]);
 
             $user->passenger()->create();
+
+            if ($avatar = $request->avatar) {
+                $user->addMediaFromBase64($avatar)
+                    ->toMediaCollection('avatar');
+            }
 
             if ($deviceToken = $request->deviceToken) {
                 $user->deviceTokens()->create([
