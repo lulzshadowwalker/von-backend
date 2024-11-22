@@ -20,14 +20,17 @@ Route::post('/auth/forgot-password', [PasswordResetLinkController::class, 'store
     ->middleware('guest')
     ->name('auth.password.email');
 
+//  TODO: Postman documentation
 Route::post('/auth/reset-password', [NewPasswordController::class, 'store'])
     ->middleware('guest')
     ->name('auth.password.store');
 
+//  TODO: Postman documentation
 Route::get('/auth/verify-email/{id}/{hash}', VerifyEmailController::class)
     ->middleware(['auth', 'signed', 'throttle:6,1'])
     ->name('auth.verification.verify');
 
+//  TODO: Postman documentation
 Route::post('/auth/email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
     ->middleware(['auth', 'throttle:6,1'])
     ->name('auth.verification.send');

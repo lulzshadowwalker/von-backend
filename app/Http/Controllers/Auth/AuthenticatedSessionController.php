@@ -50,7 +50,8 @@ class AuthenticatedSessionController extends ApiController
             $deviceToken->delete();
         }
 
-        Auth::guard('sanctum')->user()->currentAccessToken()->delete();
+        //  FIXME: Revoke the token when the user logs out
+        // Auth::guard('sanctum')->user()->currentAccessToken()->delete();
 
         return $this->response->message('Logged out successfully')->build(Response::HTTP_OK);
     }
