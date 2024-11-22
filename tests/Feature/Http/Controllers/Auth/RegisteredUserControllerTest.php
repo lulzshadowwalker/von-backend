@@ -13,13 +13,11 @@ class RegisteredUserControllerTest extends TestCase
 
     public function test_new_users_can_register(): void
     {
-        $this->post('/register', [
+        $response = $this->post('/register', [
             'name' => 'Test User',
             'email' => 'test@example.com',
             'password' => 'password',
             'password_confirmation' => 'password',
-        ], [
-            'Accept' => 'application/json',
         ]);
 
         $this->assertAuthenticated();
@@ -32,6 +30,8 @@ class RegisteredUserControllerTest extends TestCase
         $this->assertDatabaseHas('passengers', [
             'user_id' => 1,
         ]);
+
+        $this->assertStringContainsString('"token":', $response->content(), 'Token not found in response');
     }
 
     public function test_existing_users_cannot_register(): void

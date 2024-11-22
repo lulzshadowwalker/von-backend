@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Resources\TokenResource;
+use App\Support\AuthToken;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -15,13 +17,15 @@ class AuthenticatedSessionController extends ApiController
      *
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): Response
+    public function store(LoginRequest $request)
     {
         $request->authenticate();
 
         $request->session()->regenerate();
 
-        return response()->noContent();
+        $token = Auth::user()->createToken('authToken')->plainTextToken;
+
+        return TokenResource::make(new AuthToken($token));
     }
 
     /**
