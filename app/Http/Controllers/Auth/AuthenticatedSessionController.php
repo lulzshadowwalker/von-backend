@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Resources\TokenResource;
+use App\Models\DeviceToken;
 use App\Support\AuthToken;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -35,6 +36,21 @@ class AuthenticatedSessionController extends ApiController
      */
     public function destroy(Request $request)
     {
+        //  WARNING: Web guard ?
+        if ($request->deviceToken) {
+            $deviceToken = Auth::user()->deviceTokens()->where('token', $request->deviceToken);
+
+            if (! $deviceToken->exists()) {
+                return $this->response->error(
+                    title: 'Device token not found',
+                    detail: 'The device token provided does not exist',
+                    code: Response::HTTP_NOT_FOUND,
+                )->build();
+            }
+
+            $deviceToken->delete();
+        }
+
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();

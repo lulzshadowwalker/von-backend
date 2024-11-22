@@ -43,6 +43,12 @@ class RegisteredUserController extends ApiController
 
         $user->passenger()->create();
 
+        if ($deviceToken = $request->deviceToken) {
+            $user->deviceTokens()->create([
+                'token' => $deviceToken,
+            ]);
+        }
+
         event(new Registered($user));
 
         Auth::login($user);

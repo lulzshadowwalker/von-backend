@@ -18,6 +18,7 @@ class RegisteredUserControllerTest extends TestCase
             'email' => 'test@example.com',
             'password' => 'password',
             'password_confirmation' => 'password',
+            'deviceToken' => 'sample-token',
         ]);
 
         $this->assertAuthenticated();
@@ -25,6 +26,11 @@ class RegisteredUserControllerTest extends TestCase
         $this->assertDatabaseHas('users', [
             'email' => 'test@example.com',
             'name' => 'Test User',
+        ]);
+
+        $this->assertDatabaseHas('device_tokens', [
+            'user_id' => 1,
+            'token' => 'sample-token',
         ]);
 
         $this->assertDatabaseHas('passengers', [
