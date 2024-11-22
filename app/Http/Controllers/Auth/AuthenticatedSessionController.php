@@ -35,8 +35,9 @@ class AuthenticatedSessionController extends ApiController
     public function destroy(Request $request)
     {
         //  WARNING: Web guard ?
-        if ($request->deviceToken) {
-            $deviceToken = Auth::user()->deviceTokens()->where('token', $request->deviceToken);
+        $token = $request->string('data.attributes.deviceToken');
+        if ($token->isNotEmpty()) {
+            $deviceToken = Auth::user()->deviceTokens()->where('token', $token);
 
             if (! $deviceToken->exists()) {
                 return $this->response->error(

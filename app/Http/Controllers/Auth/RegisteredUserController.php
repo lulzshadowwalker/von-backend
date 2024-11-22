@@ -12,6 +12,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
 
 // TODO: Restrict the creation of drivers to the admin panel
@@ -23,14 +24,14 @@ class RegisteredUserController extends ApiController
     {
         return DB::transaction(function () use ($request) {
             $request->validate([
-                //  TODO: Refactor into jsonapi.org format
-                'name' => ['required', 'string', 'max:255'],
-                'email' => ['required', 'string', 'lowercase', 'email', 'max:255'],
-                'password' => ['required', 'confirmed', Rules\Password::defaults()],
-                'avatar' => ['nullable', 'string'],
+                //  TODO: Refactor into a form request
+                'data.attributes.name' => ['required', 'string', 'max:255'],
+                'data.attributes.email' => ['required', 'string', 'lowercase', 'email', 'max:255'],
+                'data.attributes.password' => ['required', 'confirmed:data.attributes.passwordConfirmation', Rules\Password::defaults()],
+                'data.attributes.avatar' => ['nullable', 'string'],
             ]);
 
-            if (User::where('email', $request->email)->exists()) {
+            if (User::where('email', $request->string('data.attributes.email'))->exists()) {
                 return $this->response->error(
                     title: 'User already registerd with the given email',
                     detail: 'A user with the given email already exists',
@@ -40,19 +41,19 @@ class RegisteredUserController extends ApiController
             }
 
             $user = User::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => Hash::make($request->string('password')),
+                'name' => $request->string('data.attributes.name'),
+                'email' => $request->string('data.attributes.email'),
+                'password' => Hash::make($request->string('data.attributes.password')),
             ]);
 
             $user->passenger()->create();
 
-            if ($avatar = $request->avatar) {
+            if ($avatar = $request->string('data.attributes.avatar')) {
                 $user->addMediaFromBase64($avatar)
                     ->toMediaCollection('avatar');
             }
 
-            if ($deviceToken = $request->deviceToken) {
+            if ($deviceToken = $request->string('data.attributes.deviceToken')) {
                 $user->deviceTokens()->create([
                     'token' => $deviceToken,
                 ]);
@@ -64,7 +65,10 @@ class RegisteredUserController extends ApiController
 
             $token = $user->createToken(config('app.name'))->plainTextToken;
 
-            return TokenResource::make(new AuthToken($token));
+            return response()->json(
+                TokenResource::make(new AuthToken($token))->jsonSerialize(),
+                Response::HTTP_CREATED
+            );
         });
     }
 }

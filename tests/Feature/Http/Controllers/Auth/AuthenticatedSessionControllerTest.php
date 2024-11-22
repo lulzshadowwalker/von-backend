@@ -15,9 +15,13 @@ class AuthenticatedSessionControllerTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->post(route('api.auth.login') , [
-            'email' => $user->email,
-            'password' => 'password',
+        $response = $this->post(route('api.auth.login'), [
+            'data' => [
+                'attributes' => [
+                    'email' => $user->email,
+                    'password' => 'password',
+                ],
+            ]
         ]);
 
         $this->assertAuthenticated();
@@ -29,8 +33,8 @@ class AuthenticatedSessionControllerTest extends TestCase
         $user = User::factory()->create();
 
         $this->post(route('api.auth.login'), [
-            'email' => $user->email,
-            'password' => 'wrong-password',
+            'data.attributes.email' => $user->email,
+            'data.attributes.password' => 'wrong-password',
         ]);
 
         $this->assertGuest();
@@ -43,16 +47,20 @@ class AuthenticatedSessionControllerTest extends TestCase
             ->create();
 
         $response = $this->actingAs($user)->post(route('api.auth.logout'), [
-            'deviceToken' => 'sample-token',
+            'data' => [
+                'attributes' => [
+                    'deviceToken' => 'sample-token',
+                ],
+            ]
         ], [
             'Authorization' => 'Bearer ' . $user->createToken('authToken')->plainTextToken,
             'Accept' => 'application/json',
         ]);
 
+        $response->assertOk();
+
         $user->refresh();
         $this->assertCount(0, $user->deviceTokens);
-
-        $response->assertOk();
     }
 
     public function test_it_returns_an_error_if_device_token_is_provided_but_non_existent(): void
@@ -60,7 +68,11 @@ class AuthenticatedSessionControllerTest extends TestCase
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->post(route('api.auth.logout'), [
-            'deviceToken' => 'non-existent-token',
+            'data' => [
+                'attributes' => [
+                    'deviceToken' => 'non-existent-token',
+                ],
+            ]
         ], [
             'Accept' => 'application/json',
             'Authorization' => 'Bearer ' . $user->createToken('authToken')->plainTextToken,
