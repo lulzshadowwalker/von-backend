@@ -5,11 +5,13 @@ namespace Tests\Feature\Auth;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
+use Tests\Traits\WithAuthorization;
 
 class RegisteredUserControllerTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase, WithAuthorization;
 
     public function test_new_users_can_register(): void
     {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\Role as EnumsRole;
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Resources\TokenResource;
 use App\Models\User;
@@ -12,8 +13,8 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
+use Spatie\Permission\Models\Role as SpatieRole;
 
 // TODO: Restrict the creation of drivers to the admin panel
 
@@ -47,6 +48,8 @@ class RegisteredUserController extends ApiController
             ]);
 
             $user->passenger()->create();
+
+            $user->assignRole(SpatieRole::findByName(EnumsRole::PASSENGER->value));
 
             if ($avatar = $request->string('data.attributes.avatar')) {
                 $user->addMediaFromBase64($avatar)
