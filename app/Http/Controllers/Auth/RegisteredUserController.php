@@ -68,10 +68,10 @@ class RegisteredUserController extends ApiController
 
             $token = $user->createToken(config('app.name'))->plainTextToken;
 
-            return response()->json(
-                TokenResource::make(new AuthToken($token))->jsonSerialize(),
-                Response::HTTP_CREATED
-            );
+            return $this->response
+                ->data(TokenResource::make(new AuthToken($token))->jsonSerialize())
+                ->status(Response::HTTP_CREATED)
+                ->build();
         });
     }
 }

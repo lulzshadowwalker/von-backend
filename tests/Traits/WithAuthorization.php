@@ -2,10 +2,12 @@
 
 namespace Tests\Traits;
 
+use Database\Seeders\AuthorizationSeeder;
+
 trait WithAuthorization
 {
     public function setUpWithAuthorization(): void
     {
-        $this->artisan('upsert:authorization');
+        $this->seed(AuthorizationSeeder::class);
     }
 }

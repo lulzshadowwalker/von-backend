@@ -39,6 +39,12 @@ class JsonResponseBuilder implements ResponseBuilder
         return $this;
     }
 
+    public function status(int $code): self
+    {
+        $this->statusCode = $code;
+        return $this;
+    }
+
     public function error(string $title, string $detail, int $code = null, array $meta = [], string $pointer = null, string $indicator = null): self
     {
         $error = [
