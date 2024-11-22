@@ -42,12 +42,10 @@ class AuthenticatedSessionControllerTest extends TestCase
             ->has(DeviceToken::factory()->count(1)->state(['token' => 'sample-token']))
             ->create();
 
-        $response = $this->actingAs($user)->post(route('api.auth.logout'), [
+        $response = $this->post(route('api.auth.logout'), [
             'deviceToken' => 'sample-token',
-        ], [
-            'Authorization' => 'Bearer ' . $user->createToken('authToken')->plainTextToken,
-            'Accept' => 'application/json',
         ]);
+        dd($response->status());
 
         $user->refresh();
         $this->assertCount(0, $user->deviceTokens);
@@ -61,9 +59,6 @@ class AuthenticatedSessionControllerTest extends TestCase
 
         $response = $this->actingAs($user)->post(route('api.auth.logout'), [
             'deviceToken' => 'non-existent-token',
-        ], [
-            'Accept' => 'application/json',
-            'Authorization' => 'Bearer ' . $user->createToken('authToken')->plainTextToken,
         ]);
 
         $response->assertNotFound();

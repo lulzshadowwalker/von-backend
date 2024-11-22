@@ -13,7 +13,7 @@ class RegisteredUserControllerTest extends TestCase
 
     public function test_new_users_can_register(): void
     {
-        $response = $this->post('/register', [
+        $response = $this->post(route('api.auth.register'), [
             'name' => 'Test User',
             'email' => 'test@example.com',
             'password' => 'password',
@@ -44,7 +44,7 @@ class RegisteredUserControllerTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->post('/register', [
+        $response = $this->post(route('api.auth.register'), [
             'name' => $user->name,
             'email' => $user->email,
             'password' => 'Pa$$w0rdALKSndlkn2131233lknsadlksn',

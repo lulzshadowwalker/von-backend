@@ -19,7 +19,7 @@ class PasswordResetLinkControllerTest extends TestCase
 
         $user = User::factory()->create();
 
-        $response = $this->post('/forgot-password', ['email' => $user->email]);
+        $response = $this->post(route('api.auth.password.email'), ['email' => $user->email]);
 
         $response->assertStatus(Response::HTTP_OK);
 
@@ -32,10 +32,10 @@ class PasswordResetLinkControllerTest extends TestCase
 
         $user = User::factory()->create();
 
-        $this->post('/forgot-password', ['email' => $user->email]);
+        $this->post(route('api.auth.password.email'), ['email' => $user->email]);
 
         Notification::assertSentTo($user, ResetPassword::class, function (object $notification) use ($user) {
-            $response = $this->post('/reset-password', [
+            $response = $this->post(route('api.auth.password.store'), [
                 'token' => $notification->token,
                 'email' => $user->email,
                 'password' => 'password',

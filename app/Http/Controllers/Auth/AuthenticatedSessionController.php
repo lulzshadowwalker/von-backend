@@ -22,8 +22,6 @@ class AuthenticatedSessionController extends ApiController
     {
         $request->authenticate();
 
-        $request->session()->regenerate();
-
         $token = Auth::user()->createToken('authToken')->plainTextToken;
 
         return TokenResource::make(new AuthToken($token));
@@ -51,11 +49,7 @@ class AuthenticatedSessionController extends ApiController
             $deviceToken->delete();
         }
 
-        Auth::guard('web')->logout();
-
-        $request->session()->invalidate();
-
-        $request->session()->regenerateToken();
+        Auth::guard('sanctum')->user()->currentAccessToken()->delete();
 
         return $this->response->message('Logged out successfully')->build(Response::HTTP_OK);
     }
