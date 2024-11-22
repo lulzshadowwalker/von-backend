@@ -2,7 +2,9 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Response;
 use Tests\TestCase;
 
 class RegisteredUserControllerTest extends TestCase
@@ -11,14 +13,40 @@ class RegisteredUserControllerTest extends TestCase
 
     public function test_new_users_can_register(): void
     {
-        $response = $this->post('/register', [
+        $this->post('/register', [
             'name' => 'Test User',
             'email' => 'test@example.com',
             'password' => 'password',
             'password_confirmation' => 'password',
+        ], [
+            'Accept' => 'application/json',
         ]);
 
         $this->assertAuthenticated();
-        $response->assertNoContent();
+
+        $this->assertDatabaseHas('users', [
+            'email' => 'test@example.com',
+            'name' => 'Test User',
+        ]);
+
+        $this->assertDatabaseHas('passengers', [
+            'user_id' => 1,
+        ]);
+    }
+
+    public function test_existing_users_cannot_register(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->post('/register', [
+            'name' => $user->name,
+            'email' => $user->email,
+            'password' => 'Pa$$w0rdALKSndlkn2131233lknsadlksn',
+            'password_confirmation' => 'Pa$$w0rdALKSndlkn2131233lknsadlksn',
+        ]);
+
+        $this->assertGuest();
+        $this->assertDatabaseCount('users', 1);
+        $response->assertStatus(Response::HTTP_CONFLICT);
     }
 }
