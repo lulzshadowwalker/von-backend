@@ -5,6 +5,7 @@ namespace Tests\Feature\Auth;
 use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
@@ -18,7 +19,9 @@ class PasswordResetLinkControllerTest extends TestCase
 
         $user = User::factory()->create();
 
-        $this->post('/forgot-password', ['email' => $user->email]);
+        $response = $this->post('/forgot-password', ['email' => $user->email]);
+
+        $response->assertStatus(Response::HTTP_OK);
 
         Notification::assertSentTo($user, ResetPassword::class);
     }
@@ -41,7 +44,7 @@ class PasswordResetLinkControllerTest extends TestCase
 
             $response
                 ->assertSessionHasNoErrors()
-                ->assertStatus(200);
+                ->assertStatus(Response::HTTP_OK);
 
             return true;
         });

@@ -20,6 +20,6 @@ class EmailVerificationNotificationController extends ApiController
 
         $request->user()->sendEmailVerificationNotification();
 
-        return response()->json(['status' => 'verification-link-sent']);
+        return $this->response->message('Verification link sent')->build();
     }
 }

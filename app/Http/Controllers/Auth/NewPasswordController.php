@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\ApiController;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
@@ -48,6 +49,6 @@ class NewPasswordController extends ApiController
             ]);
         }
 
-        return response()->json(['status' => __($status)]);
+        return $this->response->message(__($status))->build(Response::HTTP_OK);
     }
 }

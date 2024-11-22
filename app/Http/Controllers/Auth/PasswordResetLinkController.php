@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Api\ApiController;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Http\Response;
 
 class PasswordResetLinkController extends ApiController
 {
@@ -15,7 +15,7 @@ class PasswordResetLinkController extends ApiController
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): JsonResponse
+    public function store(Request $request)
     {
         $request->validate([
             'email' => ['required', 'email'],
@@ -34,6 +34,6 @@ class PasswordResetLinkController extends ApiController
             ]);
         }
 
-        return response()->json(['status' => __($status)]);
+        return $this->response->message(__($status))->build(Response::HTTP_OK);
     }
 }
