@@ -10,6 +10,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 
@@ -20,41 +21,43 @@ class RegisteredUserController extends ApiController
 {
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+        return DB::transaction(function () use ($request) {
+            $request->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'email' => ['required', 'string', 'lowercase', 'email', 'max:255'],
+                'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            ]);
 
-        if (User::where('email', $request->email)->exists()) {
-            return $this->response->error(
+            if (User::where('email', $request->email)->exists()) {
+                return $this->response->error(
                     title: 'User already registerd with the given email',
                     detail: 'A user with the given email already exists',
                     code: Response::HTTP_CONFLICT,
                     indicator: 'USER_ALREADY_EXISTS'
                 )->build();
-        }
+            }
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->string('password')),
-        ]);
-
-        $user->passenger()->create();
-
-        if ($deviceToken = $request->deviceToken) {
-            $user->deviceTokens()->create([
-                'token' => $deviceToken,
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->string('password')),
             ]);
-        }
 
-        event(new Registered($user));
+            $user->passenger()->create();
 
-        Auth::login($user);
+            if ($deviceToken = $request->deviceToken) {
+                $user->deviceTokens()->create([
+                    'token' => $deviceToken,
+                ]);
+            }
 
-        $token = $user->createToken(config('app.name'))->plainTextToken;
+            event(new Registered($user));
 
-        return TokenResource::make(new AuthToken($token));
+            Auth::login($user);
+
+            $token = $user->createToken(config('app.name'))->plainTextToken;
+
+            return TokenResource::make(new AuthToken($token));
+        });
     }
 }
