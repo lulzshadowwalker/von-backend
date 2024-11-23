@@ -48,7 +48,7 @@ class RegisteredUserControllerTest extends TestCase
 
         $this->assertStringContainsString('"token":', $response->content(), 'Token not found in response');
 
-        $this->assertNotNull($avatar = User::first()->avatar);
+        $this->assertNotNull($avatar = User::first()->avatarFile);
 
         $avatar->delete();
     }

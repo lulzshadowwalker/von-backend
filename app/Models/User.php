@@ -70,6 +70,11 @@ class User extends Authenticatable implements HasMedia
 
     public function avatar(): Attribute
     {
+        return Attribute::get(fn() => $this->getFirstMediaUrl(self::MEDIA_COLLECTION_AVATAR));
+    }
+
+    public function avatarFile(): Attribute
+    {
         return Attribute::get(fn() => $this->getFirstMedia(self::MEDIA_COLLECTION_AVATAR));
     }
 
@@ -86,5 +91,20 @@ class User extends Authenticatable implements HasMedia
     public function scopeAdmins(Builder $query): void
     {
         $query->role(Role::ADMIN);
+    }
+
+    public function isPassenger(): Attribute
+    {
+        return Attribute::get(fn() => $this->hasRole(Role::PASSENGER));
+    }
+
+    public function isDriver(): Attribute
+    {
+        return Attribute::get(fn() => $this->hasRole(Role::DRIVER));
+    }
+
+    public function isAdmin(): Attribute
+    {
+        return Attribute::get(fn() => $this->hasRole(Role::ADMIN));
     }
 }
