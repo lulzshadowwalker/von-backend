@@ -1,14 +1,18 @@
 <?php
 
 use App\Contracts\ProfileController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\WalletController;
+use App\Http\Controllers\Api\WalletTransactionController;
 use Illuminate\Support\Facades\Route;
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/me', [ProfileController::class, 'index'])->name('profile.index');
 
-Route::get('/me', [ProfileController::class, 'index'])->middleware('auth:sanctum')->name('profile.index');
+    Route::get('/wallets/{wallet}', [WalletController::class, 'show'])->name('wallets.show');
+    Route::patch('/wallets/{wallet}', [WalletController::class, 'update'])->name('wallets.update');
 
-Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-    return $request->user();
+    Route::get('/wallets/{wallet}/transactions', [WalletTransactionController::class, 'index'])->name('wallets.transactions.index');
+    Route::get('/wallets/{wallet}/transactions/{transaction}', [WalletTransactionController::class, 'show'])->name('wallets.transactions.show');
 });
