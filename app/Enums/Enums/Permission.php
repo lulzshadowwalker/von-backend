@@ -2,7 +2,7 @@
 
 namespace App\Enums\Enums;
 
-enum Permission
+enum Permission: string
 {
-    //
+    case VIEW_OWN_WALLET = 'VIEW_OWN_WALLET';
 }

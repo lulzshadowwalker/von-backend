@@ -10,13 +10,15 @@ class WalletTransactionController extends ApiController
 {
     public function index(Wallet $wallet)
     {
-        //  TODO: Authorization
+        $this->authorize('view', $wallet);
 
         return TransactionResource::collection($wallet->transactions);
     }
 
     public function show(Wallet $wallet, Transaction $transaction)
     {
+        $this->authorize('view', $transaction);
+
         return TransactionResource::make($transaction);
     }
 }

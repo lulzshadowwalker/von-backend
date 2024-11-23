@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use App\Enums\Role as RoleEnum;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role as SpatieRole;
 
 class UpsertAuthorization extends Command

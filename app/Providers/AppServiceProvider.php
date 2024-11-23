@@ -7,7 +7,12 @@ use App\Contracts\ResponseBuilder;
 use App\Http\Controllers\Api\DriverProfileController;
 use App\Http\Controllers\Api\PassengerProfileController;
 use App\Http\Response\JsonResponseBuilder;
+use App\Policies\TransactionPolicy;
+use App\Policies\WalletPolicy;
+use Bavix\Wallet\Models\Transaction;
+use Bavix\Wallet\Models\Wallet;
 use Exception;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
@@ -33,7 +38,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         ResetPassword::createUrlUsing(function (object $notifiable, string $token) {
-            return config('app.frontend_url')."/password-reset/$token?email={$notifiable->getEmailForPasswordReset()}";
+            return config('app.frontend_url') . "/password-reset/$token?email={$notifiable->getEmailForPasswordReset()}";
         });
+
+        Gate::policy(Wallet::class, WalletPolicy::class);
+        Gate::policy(Transaction::class, TransactionPolicy::class);
     }
 }
