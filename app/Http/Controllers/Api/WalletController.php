@@ -17,6 +17,6 @@ class WalletController extends ApiController
 
     public function update(Request $request, Wallet $wallet)
     {
-        //
+        //  TODO: Implement WalletController.update()
     }
 }
