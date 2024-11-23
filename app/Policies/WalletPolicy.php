@@ -14,6 +14,6 @@ class WalletPolicy
 
     public function view(User $user, Wallet $wallet)
     {
-        return $wallet->holder->user->id === $wallet->user_id;
+        return $wallet->holder->user->id === $user->id;
     }
 }
