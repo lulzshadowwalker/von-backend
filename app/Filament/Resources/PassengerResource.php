@@ -36,7 +36,7 @@ class PassengerResource extends Resource
             ->columns([
                 Tables\Columns\SpatieMediaLibraryImageColumn::make('user.avatar')
                     ->collection(User::MEDIA_COLLECTION_AVATAR)
-                    ->rounded()
+                    ->circular()
                     ->label(
                     /**TRANSLATION*/
                     'Avatar'),
