@@ -27,7 +27,7 @@ class WalletControllerTest extends TestCase
             ->assertExactJson($resource->response()->getData(true));
     }
 
-    public function test_a_user_cannot_view_another_users_wallet(): void
+    public function test_a_user_cannot_view_another_user_wallet(): void
     {
         $passenger = Passenger::factory()->create();
         $passenger->user->assignRole(Role::PASSENGER);

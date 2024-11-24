@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('routes', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->json('name');
             $table->decimal('from_location_latitude', 10, 7);
             $table->decimal('from_location_longitude', 10, 7);
             $table->decimal('to_location_latitude', 10, 7);

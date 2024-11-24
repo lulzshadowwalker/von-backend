@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Translatable\HasTranslations;
 
 class Route extends Model
 {
-    use HasFactory;
+    use HasFactory, HasTranslations;
 
     protected $fillable = [
         'name',
@@ -28,6 +29,8 @@ class Route extends Model
             'to_location_longitude' => 'decimal:7',
         ];
     }
+
+    protected $translatable = ['name'];
 
     public function trips(): HasMany
     {
