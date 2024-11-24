@@ -8,6 +8,7 @@
     "require": {
         "php": "^8.2",
         "bavix/laravel-wallet": "^11.3",
+        "filament/filament": "^3.2",
         "laravel/framework": "^11.31",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
@@ -42,7 +43,8 @@
     "scripts": {
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover --ansi"
+            "@php artisan package:discover --ansi",
+            "@php artisan filament:upgrade"
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
@@ -58,7 +60,7 @@
         "dev": [
             "Composer\\Config::disableProcessTimeout",
             "npx concurrently -c \"#93c5fd,#c4b5fd,#54e87b,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"mailhog\" \"php artisan pail\" \"npm run dev\" --names=server,queue,mailhog,logs,vite"
-]
+        ]
     },
     "extra": {
         "laravel": {

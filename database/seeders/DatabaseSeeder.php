@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\Role;
 use App\Models\Passenger;
 use App\Models\Trip;
 use App\Models\User;
@@ -13,10 +14,11 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(AuthorizationSeeder::class);
 
-        User::factory()->create([
+        $lulzie = User::factory()->create([
             'name' => 'Lulzie',
             'email' => 'lulzie@example.com',
         ]);
+        $lulzie->assignRole(Role::ADMIN);
 
         Trip::factory()
             ->count(10)
