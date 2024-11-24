@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Bus extends Model
 {
@@ -27,8 +28,8 @@ class Bus extends Model
         return $this->belongsToMany(Driver::class);
     }
 
-    public function trips(): BelongsToMany
+    public function trips(): HasMany
     {
-        return $this->belongsToMany(Trip::class);
+        return $this->hasMany(Trip::class);
     }
 }
