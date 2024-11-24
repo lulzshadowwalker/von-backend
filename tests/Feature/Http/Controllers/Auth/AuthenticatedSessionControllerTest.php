@@ -5,6 +5,7 @@ namespace Tests\Feature\Auth;
 use App\Models\DeviceToken;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
 class AuthenticatedSessionControllerTest extends TestCase
@@ -20,12 +21,14 @@ class AuthenticatedSessionControllerTest extends TestCase
                 'attributes' => [
                     'email' => $user->email,
                     'password' => 'password',
+                    'deviceName' => 'Lulzie\'s iPhone',
                 ],
             ]
         ]);
 
         $this->assertAuthenticated();
         $this->assertStringContainsString('"token":', $response->content(), 'Token not found in response');
+        $this->assertEquals('Lulzie\'s iPhone', Auth::user()->tokens()->first()->name);
     }
 
     public function test_users_can_not_authenticate_with_invalid_password(): void

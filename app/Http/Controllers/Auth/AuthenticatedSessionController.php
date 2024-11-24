@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Actions\GenerateAccessToken;
+use App\Contracts\ResponseBuilder;
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Resources\TokenResource;
-use App\Models\DeviceToken;
 use App\Support\AuthToken;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -13,6 +14,14 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthenticatedSessionController extends ApiController
 {
+    public function __construct(
+        protected ResponseBuilder $response,
+        protected GenerateAccessToken $generator,
+    )
+    {
+        //
+    }
+
     /**
      * Login
      *
@@ -22,7 +31,7 @@ class AuthenticatedSessionController extends ApiController
     {
         $request->authenticate();
 
-        $token = Auth::user()->createToken('authToken')->plainTextToken;
+        $token = $this->generator->generate(Auth::user(), $request->deviceName());
 
         return TokenResource::make(new AuthToken($token));
     }

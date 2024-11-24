@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Actions\GenerateAccessToken;
+use App\Contracts\ResponseBuilder;
 use App\Enums\Role as EnumsRole;
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Resources\TokenResource;
@@ -21,6 +23,13 @@ use Spatie\Permission\Models\Role as SpatieRole;
 //  NOTE: This is only meant for passengers as drivers can only be created by the admin from the dashboard panel
 class RegisteredUserController extends ApiController
 {
+    public function __construct(
+        protected ResponseBuilder $response,
+        protected GenerateAccessToken $generator,
+    ) {
+        //
+    }
+
     public function store(Request $request)
     {
         return DB::transaction(function () use ($request) {
@@ -66,7 +75,7 @@ class RegisteredUserController extends ApiController
 
             Auth::login($user);
 
-            $token = $user->createToken(config('app.name'))->plainTextToken;
+            $token = $this->generator->generate($user, $request->string('data.attributes.deviceName'));
 
             return $this->response
                 ->data(TokenResource::make(new AuthToken($token))->jsonSerialize())
