@@ -14,11 +14,14 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(AuthorizationSeeder::class);
 
+        //  TODO: Seed test passengers/drivers/admins
         $lulzie = User::factory()->create([
             'name' => 'Lulzie',
             'email' => 'lulzie@example.com',
         ]);
-        $lulzie->assignRole(Role::ADMIN);
+        // $lulzie->assignRole(Role::ADMIN);
+        $lulzie->assignRole(Role::PASSENGER);
+        $lulzie->passenger()->create();
 
         Trip::factory()
             ->count(10)
